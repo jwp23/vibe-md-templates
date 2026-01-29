@@ -57,9 +57,29 @@ Each new story should follow this format:
 3. Once you have enough information, generate the new user stories
 4. Append the new stories to the end of the `## 2. The Features` section in `.claude/prd.md`
 5. Confirm with the user that the stories have been added successfully
-6. Ask if they want to create a beads issue for the new feature:
+6. Create beads issues for the new feature(s):
+
+   **If the project has a `beads-workflow` skill**, invoke it to break the feature into implementation tasks following project conventions.
+
+   **Otherwise, use these conventions:**
+
+   **Granularity:** Break large features into atomic, single-session tasks:
+   - Too big: "Implement user authentication system"
+   - Right size: "Add JWT token validation middleware"
+
+   **Issue creation:**
    ```bash
-   bd create "Implement <feature_name>" --type feature
+   bd create "<action> <component>" --type <type> -p <priority>
    ```
+
+   **Types:** feature, task, bug, chore, epic
+   **Priority:** -p 0 (critical) through -p 4 (backlog), default -p 2
+
+   **Linking (if applicable):**
+   - `--parent <id>` for subtasks
+   - `--blocks <id>` for dependencies
+   - `--discovered-from <id>` for related work
+
+   **Include acceptance criteria** in the description when creating the issue.
 
 Remember: You're updating the file directly—no manual copy-paste needed!
