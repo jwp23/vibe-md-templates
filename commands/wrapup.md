@@ -8,8 +8,10 @@ Please perform the following wrap-up tasks to close this session cleanly:
 
 ### 1. Git & Code Status
 - Run `git status` to check for any uncommitted changes
-- If there are changes, stage and commit them using Conventional Commits format
+- If there are changes, use `/conventional-commits` to stage and commit
 - Push all commits to the remote repository
+
+**Note:** Do NOT use `git add -f` for gitignored files (e.g., `.beads/`, `.claude/`). If these directories are gitignored, their changes are tracked separately from the main repo. Just skip committing them.
 
 ### 2. Beads Issue Updates
 Update issue tracking for work completed this session:
@@ -21,6 +23,8 @@ Update issue tracking for work completed this session:
 ### 3. Documentation Updates
 Check and update the following files as needed:
 - `.claude/changelog.md` - Add entries for any completed features or bug fixes from this session
+
+**If `.claude/` is gitignored:** The changelog is local documentation only. Update it for your own reference but don't try to commit it.
 
 ### 4. Build Verification
 - Run your project's build command to ensure everything compiles (e.g., `npm run build`, `cargo build`, `go build`, etc.)

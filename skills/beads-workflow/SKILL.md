@@ -168,8 +168,29 @@ git checkout -b feature/${WORK_ID}-<description>
 ```bash
 bd update <id> --status in_progress
 # ... perform the work ...
+# ... run code quality review (see below) ...
 bd close <id>
 ```
+
+### Code Quality Review (REQUIRED for JS/TS)
+
+**MUST run before closing any bead that touched JS/TS files** (`.js`, `.ts`, `.jsx`, `.tsx`, `.mjs`, `.cjs`).
+
+Dispatch the clean-code-reviewer subagent:
+```
+Tool: Task
+Parameters:
+  subagent_type: "clean-code-reviewer"
+  prompt: "Review recent changes for Clean Code principles. Focus on files modified for <bead-id>: <description>"
+```
+
+**Wait for review results:**
+- Issues found → fix them, re-run reviewer until approved
+- Approved → proceed to close
+
+**Skip ONLY for:** docs-only (`.md`), pure config (`.json`/`.yaml` with no logic), non-JS/TS files.
+
+**If unsure whether to skip:** Run the review. It's cheap insurance.
 
 ### Handling Blocked Work
 
@@ -275,5 +296,6 @@ Install k6 if needed: `brew install k6`
 - Session ending without closing completed beads
 - Discovering issues and not capturing them
 - Skipping `bd sync --from-main` on ephemeral branches
+- **Skipping code quality review** for JS/TS work before closing
 
-**All mean: Pause. Create/update beads first.**
+**All mean: Pause. Create/update beads first (or run review before closing).**

@@ -1,11 +1,13 @@
 ---
 name: conventional-commits
-description: Use when creating git commits. Enforces Conventional Commits format with single-line messages under 50 characters. Trigger words: commit, git commit, stage, commit message.
+description: Use when running git commit, /commit, or any commit workflow. REQUIRED for all commits in this project.
 ---
 
 # Conventional Commits
 
-## Instructions
+**This skill is MANDATORY for all commits in this project.** See CLAUDE.md § Git Commits.
+
+## Rules
 
 When creating a git commit message, follow these rules strictly:
 
