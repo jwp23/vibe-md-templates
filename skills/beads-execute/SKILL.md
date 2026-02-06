@@ -159,9 +159,11 @@ Ready for review. Continue with next batch?
 
 When all children complete:
 
-```bash
-bd close <parent-id>
-```
+1. **Check README:** Apply `readme-sync` skill - does this feature affect user workflows?
+2. **Close parent:**
+   ```bash
+   bd close <parent-id>
+   ```
 
 Report: "Feature complete. All tasks finished."
 

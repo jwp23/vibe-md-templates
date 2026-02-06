@@ -65,17 +65,19 @@ Wait for the user to explicitly tell you what they want to work on.
 
 **Only proceed with this step AFTER the user explicitly tells you what to work on.**
 
-When the user selects a bead:
+When the user selects a bead, check its type with `bd show <selected-id>`:
 
-**If bead is a FEATURE (needs planning):**
+**If bead is an EPIC:**
 
-Check if bead already has child beads:
-```bash
-bd list --parent <selected-id>
-```
+Check children with `bd list --parent <selected-id>`:
+- Children are **features** → Run `/beads-plan <epic-id>` to break each feature into tasks
+- Children are **tasks** (already planned) → Run `/beads-execute <epic-id>` to implement
 
-- **No children:** Say "This feature needs a plan. Run `/beads-plan <bead-id>` to break it into implementation steps."
-- **Has children:** Say "This feature has a plan. Run `/beads-execute <bead-id>` to start implementation."
+**If bead is a FEATURE:**
+
+Check children with `bd list --parent <selected-id>`:
+- **No children** → Run `/beads-plan <feature-id>` to create implementation tasks
+- **Has task children** → Run `/beads-execute <feature-id>` to implement
 
 **If bead is a TASK or BUG (already atomic):**
 

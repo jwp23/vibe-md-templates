@@ -84,6 +84,20 @@ bd create "Fix login crash" --type bug -p 0
 - **Right size:** "Add JWT token validation middleware"
 - **Right size:** "Create login API endpoint"
 
+### Feature Planning and Execution
+
+For **feature beads** that need implementation planning (multi-step, not atomic):
+
+1. Use `/beads-plan <id>` to break into atomic tasks
+2. Use `/beads-execute <id>` to implement the plan
+
+For **epics** created by `/story` with child features:
+
+1. Use `/beads-plan <epic-id>` to break each child into atomic tasks
+2. Use `/beads-execute <epic-id>` to implement in dependency order
+
+For **tasks, bugs, and chores** that are already atomic: claim, implement, close directly using section 4 below.
+
 ### Issue Dependencies
 
 ```bash

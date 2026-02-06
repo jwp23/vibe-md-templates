@@ -46,22 +46,82 @@ Keep it light, supportive, and collaborative.
 
 Each new story should follow this format:
 ```
-* **Story X:** As a [type of user], I want to [take an action] so that I can [achieve a goal].  
+* **Story X:** As a [type of user], I want to [take an action] so that I can [achieve a goal].
     * Feature name: `short_feature_name`
 ```
+
+## Thematic Sections and Epics
+
+**When to create a new section and epic:**
+
+If the new stories represent a **cohesive theme** that doesn't fit any existing `### Subsection` in the PRD, you should:
+
+1. **Create a new `### Section Name` heading** in `.claude/prd.md` under `## 2. The Features`
+2. **Create a bead epic** to represent the entire theme
+3. **Create child beads** for each story under that epic
+
+**How to recognize a new theme:**
+- 3+ related stories that share a common goal or domain
+- Stories that would look out of place under existing sections
+- A distinct capability area (e.g., "Server-Side Rendering", "Mobile Support", "Analytics Dashboard")
+
+**Example PRD structure:**
+```markdown
+## 2. The Features
+
+### Existing Section
+* **Story 1:** ...
+* **Story 2:** ...
+
+### New Theme Name  <-- You add this
+* **Story 64:** ...
+* **Story 65:** ...
+* **Story 66:** ...
+```
+
+**Corresponding beads structure:**
+```bash
+# Create the epic first
+bd create "New Theme Name" --type epic -p 2
+
+# Create child features under the epic
+bd create "Feature from Story 64" --type feature --parent <epic-id>
+bd create "Feature from Story 65" --type feature --parent <epic-id>
+bd create "Feature from Story 66" --type feature --parent <epic-id>
+```
+
+**When NOT to create an epic:**
+- Single story additions to existing sections
+- Stories that fit naturally under an existing `### Subsection`
+- Very small additions (1-2 stories) without a clear theme
 
 ## Implementation Process
 
 1. Start by reading `.claude/prd.md` to see the existing structure
 2. Have a conversational back-and-forth with the user to understand their new feature(s)
 3. Once you have enough information, generate the new user stories
-4. Append the new stories to the end of the `## 2. The Features` section in `.claude/prd.md`
-5. Confirm with the user that the stories have been added successfully
-6. Create beads issues for the new feature(s):
+4. **Decide: existing section or new theme?**
+   - If stories fit existing section: append to that section
+   - If stories form new theme: create new `### Section Name` heading
+5. Update `.claude/prd.md` with the new stories
+6. Confirm with the user that the stories have been added successfully
+7. Create beads issues:
 
-   **If the project has a `beads-workflow` skill**, invoke it to break the feature into implementation tasks following project conventions.
+   **For new thematic sections (3+ stories with new `###` heading):**
+   ```bash
+   # Create epic for the theme
+   bd create "<Section Name>" --type epic -p 2
 
-   **Otherwise, use these conventions:**
+   # Create child features under the epic
+   bd create "<Story title>" --type feature --parent <epic-id>
+   # ... repeat for each story
+   ```
+
+   **For additions to existing sections:**
+
+   If the project has a `beads-workflow` skill, invoke it to break the feature into implementation tasks following project conventions.
+
+   Otherwise, use these conventions:
 
    **Granularity:** Break large features into atomic, single-session tasks:
    - Too big: "Implement user authentication system"

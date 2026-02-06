@@ -2,28 +2,20 @@
 
 Purpose: This is the main context file that tells the AI which documents to read and how to resolve conflicting instructions between them.
 
-> This document serves as the central reference point for understanding project requirements, operating instructions, and development plans for the **Vision Synthetic Monitor** project.
-
----
-
-## Project Overview
-
-**Vision Synthetic Monitor** is a synthetic monitoring system that validates Fenway PACS medical image viewer functionality and measures time-to-first-image (TTFI) performance across customer environments.
-
-- **Primary Function:** Detect viewer outages before users report them
-- **Secondary Function:** Measure and track viewer performance metrics
-- **Technology Stack:** k6 browser automation, Terraform, Grafana Cloud, GitLab CI/CD
+> Use this file to provide the master context for the project. This document serves as the central reference point for understanding project requirements, operating instructions, and development plans.
 
 ---
 
 ## Required Context Files
 
-To fully understand the project requirements, operating instructions, and development plan, I must read the following files in this directory:
+To fully understand the project requirements, my operating instructions, and the development plan, I must read the following files in this directory:
 
-- **`prd.md`**: Product requirements defining monitoring features, user stories, and roadmap
-- **`infra.md`**: Infrastructure documentation covering k6 scripts, Terraform, GCS, GitLab CI/CD, and deployment architecture
-- **`security.md`**: Security requirements including SOC2 controls, secrets management, and compliance
-- **`sbom.md`**: Software Bill of Materials listing approved technologies, k6 modules, and Terraform providers
+- **`prd.md`**: The Product Requirements Document, which details the features, UI/UX, and technical specifications for the project.
+- **`skills/beads-workflow/SKILL.md`**: The development workflow using **beads** (`bd`) for issue tracking. Includes session startup, planning, execution, and session completion procedures.
+- **`infra.md`**: The infrastructure documentation, which describes deployment architecture, coding standards, cloud resources, networking, and operational infrastructure requirements.
+- **`security.md`**: The security documentation, which details security requirements, threat models, vulnerability assessments, and security best practices for the application.
+- **`sbom.md`**: The Software Bill of Materials, which provides a comprehensive inventory of all software components, dependencies, and licenses used in the project.
+<!-- * **`tests.md`**: The testing documentation, which outlines test strategies, test cases, testing frameworks, and quality assurance procedures for the project. -->
 
 I will always consult these files to ensure I have the most up-to-date information before proceeding with any task.
 
@@ -31,134 +23,59 @@ I will always consult these files to ensure I have the most up-to-date informati
 
 ## Changelog Usage
 
-Whenever I am asked about previous commits, need to understand previous changes, or need to create a new commit, I will consult:
+Whenever I am asked about previous commits, or I need to understand previous changes that were made, or I need to create a new commit, I will consult the following file in this directory.
 
-- **`changelog.md`**: Project changelog tracking version history, feature additions, bug fixes, and completed beads issues
+- **`changelog.md`**: The project changelog, which tracks version history, feature additions, bug fixes, and other important updates throughout the development lifecycle.
 
 ---
 
-## Beads Issue Tracking
+## Documentation Sync
 
-This project uses **beads** (`bd`) for issue tracking. Issue prefix: `vsm`
+After completing feature implementation, before session close, check if README.md needs updating:
 
-### The Iron Rule
+- **`skills/readme-sync/SKILL.md`**: Decision guide for when and how to update README.md. Apply after code changes that affect user workflows, CLI flags, prerequisites, or project structure.
+
+---
+
+## Git Commits
+
+All commits in this project **MUST** follow the [Conventional Commits](https://www.conventionalcommits.org/) format:
 
 ```
-NO CODE WITHOUT A BEAD FIRST
+<type>: <description>
 ```
 
-When user requests work ("implement X", "add Y", "fix Z"):
+**Rules:**
+- 50 characters max (including type)
+- Single line only — no body or footer
+- Never reference ticket IDs or story numbers
+- Describe WHAT was done, not HOW
 
-1. **STOP** - Do not write any code yet
-2. **CREATE** - `bd create "Title" --type feature|task|bug`
-3. **CLAIM** - `bd update <id> --status in_progress`
-4. **THEN CODE** - Only now may you implement
+**Allowed types:** `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`
 
-**No exceptions:**
-- Not for "quick fixes"
-- Not for "simple changes"
-- Not for "I'll create the bead after"
-- Not for "let me just explore first"
+**Examples:**
+- `feat: add user profile page`
+- `fix: resolve null pointer on logout`
+- `refactor: simplify cart total logic`
 
-### Session End Protocol
-
-Before ending any session, complete ALL steps in order:
-
-1. File issues for remaining/discovered work
-2. Close completed issues: `bd close <id>`
-3. Sync beads: `bd sync --from-main` (critical for ephemeral branches)
-4. Commit and push: `git add . && git commit -m "..." && git push`
-
-### Quick Reference
-
-```bash
-bd ready                   # See unblocked work
-bd create "Title" --type feature|task|bug  # Create issue
-bd update vsm-XXX --status in_progress     # Claim work
-bd close vsm-XXX                           # Complete work
-bd sync --from-main                        # Sync on ephemeral branches
-```
-
-For detailed commands, issue types, priorities, dependencies, and edge cases, see the `beads-workflow` skill.
-
-### Workflow Commands
-
-Use these commands to manage sessions:
-- `/gogogo` - Start a session (loads context, shows ready work, breaks work into tasks)
-- `/story` - Add new feature (updates prd.md, creates initial bead)
-- `/wrapup` - End a session (runs tests, closes beads, syncs, commits)
+See `.claude/skills/conventional-commits/SKILL.md` for full documentation.
 
 ---
 
 ## Conflict Resolution Matrix
 
-When instructions in different context files conflict, follow this order of precedence:
+When instructions in different context files conflict, you **MUST** follow this order of precedence to resolve conflicts and ensure consistent decision-making.
 
-| Priority | Document | Scope | Override Rule |
-|----------|----------|-------|---------------|
-| **1** | `security.md`, `sbom.md` | Safety & supply chain | **Override all other documents** |
-| **2** | `infra.md` | Runtime environment | Override incompatible feature requests |
-| **3** | `CLAUDE.md` | Global conventions | Baseline project rules |
-| **4** | `prd.md` | Feature requirements | May refine but not violate higher constraints |
-| **5** | `beads-workflow` skill | Process/how-to | Governs plan creation and execution |
+- **Priority 1 - Safety & Supply Chain:** **`security.md`** and **`sbom.md`** (Safety & supply chain constraints) — **Override all other documents.**
+- **Priority 2 - Runtime Environment:** **`infra.md`** (Runtime facts) — **Override** feature requests that are incompatible with the environment. You must surface these conflicts to the user for guidance.
+- **Priority 3 - Global Conventions:** **`claude.md`** (Global conventions) — Baseline project rules.
+- **Priority 4 - Feature Requirements:** **`prd.md`** (Feature-level specifics) — May refine global rules but **must not violate** higher-level constraints. You must surface these conflicts to the user for guidance.
+- **Priority 5 - Process & Workflow:** **`skills/beads-workflow/SKILL.md`** (Process/how-to) — Governs plan creation and execution.
 
 ### Conflict Resolution Process
 
 If you find a conflict, you **MUST**:
 
-1. **State the conflict clearly** - Identify the specific conflicting instructions and their sources
-2. **Follow the precedence rule** - Apply the priority order defined above
-3. **Recommend minimal edits** - Suggest changes to harmonize the sources, starting with the lowest-authority document
-
----
-
-## Key Project Constraints
-
-### What This Project Does
-- Validates medical image viewer loads exams successfully
-- Measures time-to-first-image (TTFI) performance
-- Captures screenshots for debugging
-- Sends metrics to Grafana dashboards
-
-### What This Project Does NOT Do
-- Monitor login/navigation failures (graceful exit, no alerts)
-- Process or store PHI (all data is scrubbed)
-- Handle alerting logic (delegated to Grafana Cloud)
-- Modify the PACS viewer application
-
-### Alerting Policy
-Only alert on viewer-specific failures:
-- `viewer_failure`: Viewer window or canvas issues → **Alert**
-- `exam_not_found`: Test data missing → **Alert**
-- `non_viewer_exit`: Login, navigation, infrastructure → **No alert** (graceful exit)
-
----
-
-## Documentation Conventions
-
-### File Locations
-
-| Type | Location | Purpose |
-|------|----------|---------|
-| **README.md** | `/README.md` | How to use the project and navigate the codebase |
-| **Technical docs** | `/docs/` | Deep-dive technical documentation |
-| **AI context files** | `/.claude/` | AI instructions, PRD, workflow rules |
-| **Inline code docs** | Same directory as code | JSDoc comments in `.js` files |
-
-### README.md Content
-
-The root `README.md` should contain:
-- **Project overview** - What this project does (1-2 paragraphs)
-- **Quick start** - How to run locally, prerequisites, setup steps
-- **Project structure** - Directory layout and what each folder contains
-- **Configuration** - Environment variables, config files
-- **Deployment** - How to deploy changes (CI/CD overview)
-- **Links** - References to `/docs/` for detailed technical docs
-
-### Rules
-
-- **ALWAYS** place new technical documentation in `/docs/`
-- **NEVER** create documentation files in `.claude/` (reserved for AI context only)
-- **README.md** is for humans navigating the repo - keep it practical and concise
-- Use kebab-case for doc filenames: `ttfi-extraction.md`, `deployment-guide.md`
-- Reference `/docs/` from README.md for detailed technical information
+1. **State the conflict clearly** - Identify the specific conflicting instructions and their sources.
+2. **Follow the precedence rule** - Apply the priority order defined above to resolve the conflict.
+3. **Recommend minimal edits** - Suggest changes to harmonize the sources, starting with the lowest-authority document (`prd.md` or `beads-workflow`).
