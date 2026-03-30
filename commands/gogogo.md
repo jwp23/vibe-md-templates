@@ -6,23 +6,6 @@ description: Start a new Claude Code session - load context, check git status, a
 
 Please perform the following startup tasks to begin this session:
 
-### 0. Status Line Check (First Time Only)
-
-Check if the context status line is configured by checking if `~/.claude/statusline.sh` exists.
-
-**If the file does NOT exist**, offer to set it up:
-
-"I noticed you don't have the context status line configured yet. This shows you real-time token usage at the bottom of your terminal, helping you stay aware of context limits before autocompact triggers.
-
-Would you like me to set it up now? (This is a one-time setup that works across all projects.)"
-
-- **If yes:** Follow the setup process from `/setup-statusline` (check for jq, create script, update settings.json)
-- **If no:** Continue with the session startup
-
-**If the file already exists**, skip this step silently and continue.
-
----
-
 ### 1. Environment Setup
 - Check if your dev server is running (customize the port for your project)
 - If not running, start it in background (e.g., `npm run dev`, `python manage.py runserver`, etc.)
@@ -45,7 +28,6 @@ Read and internalize the full project context:
 **Core Context Files (read but don't summarize verbosely):**
 - `.claude/claude.md` - Master context and conflict resolution rules
 - `.claude/prd.md` - Product requirements and user stories
-- `.claude/workflow.md` - Development workflow and plan execution rules
 - `.claude/infra.md` - Infrastructure and coding conventions
 
 **Status Files (summarize for user):**
@@ -60,15 +42,61 @@ Read and internalize the full project context:
 - Verify environment files exist (e.g., `.env.local`, `.env`)
 - Note if any environment variables appear to be missing based on example files
 
-### 5. Present Options
-After gathering context, ask the user:
+### 5. Present Options and STOP
+
+After gathering context, present a summary and **STOP to wait for user input**:
 
 "Session ready! Here's what I found:
 - **Recent work:** [Summary from changelog]
 - **In progress:** [Any in-progress issues from `bd list`]
 - **Ready to start:** [Available issues from `bd ready`]
 
-What would you like to work on?
-1. Continue: [in-progress issue if any]
-2. Next up: [top issue from `bd ready`]
-3. Something else - describe what you'd like to do"
+What would you like to work on?"
+
+**CRITICAL: STOP HERE.** Do NOT automatically:
+- Continue on in-progress work
+- Start the next ready issue
+- Suggest a specific task to begin
+- Take any action beyond presenting this summary
+
+Wait for the user to explicitly tell you what they want to work on.
+
+### 6. Route to Next Step (ONLY after user selects)
+
+**Only proceed with this step AFTER the user explicitly tells you what to work on.**
+
+When the user selects a bead, check its type with `bd show <selected-id>`:
+
+**If bead is an EPIC:**
+
+Check children with `bd list --parent <selected-id>`:
+- Children are **features** → Run `/beads-plan <epic-id>` to break each feature into tasks
+- Children are **tasks** (already planned) → Run `/beads-execute <epic-id>` to implement
+
+**If bead is a FEATURE:**
+
+Check children with `bd list --parent <selected-id>`:
+- **No children** → Run `/beads-plan <feature-id>` to create implementation tasks
+- **Has task children** → Run `/beads-execute <feature-id>` to implement
+
+**If bead is a TASK or BUG (already atomic):**
+
+Proceed directly:
+```bash
+bd update <bead-id> --status in_progress
+```
+
+Then implement following `beads-workflow` skill.
+
+### 7. Session Workflow Reminder
+
+**Beads-Native Planning:**
+- Features need plans: `/beads-plan <bead-id>` before coding
+- Execute plans: `/beads-execute <bead-id>` to implement
+- Plans persist across sessions in beads
+
+**Iron Rules:**
+- NO CODE WITHOUT A BEAD FIRST
+- NO FEATURE CODE WITHOUT A PLAN FIRST
+- Create beads for discovered work: `bd create "..." --discovered-from <current-id>`
+- Close completed work: `bd close <id>`
